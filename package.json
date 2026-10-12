@@ -1,0 +1,12 @@
+{
+  "name": "configurador-comercial-closer",
+  "version": "1.0.0",
+  "description": "Configurador Comercial & Carrinho de Fechamento para Closers (Checkout Interno)",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": ["closer", "checkout", "vendas", "comercial", "handoff", "financeiro"],
+  "author": "Antigravity UI/UX Team",
+  "license": "MIT"
+}
