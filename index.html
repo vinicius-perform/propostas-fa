@@ -640,13 +640,14 @@
       const container = document.getElementById('products-list');
       
       container.innerHTML = products.map(p => {
-        const itemState = selectedItems[p.id] || { selected: false, price: p.fullPrice };
+        const itemState = selectedItems[p.id] || { selected: false, price: p.fullPrice, variable: p.variable };
         const isSelected = itemState.selected;
         const currentPrice = itemState.price !== undefined ? itemState.price : p.fullPrice;
+        const currentVariable = itemState.variable !== undefined ? itemState.variable : p.variable;
         const isBelowMin = currentPrice < p.minPrice;
 
         return `
-          <div class="p-3.5 sm:px-5 sm:py-4 transition-colors ${isSelected ? 'bg-[#FCFCFE]' : 'hover:bg-[#FAFAFC]'} flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div class="p-3.5 sm:px-5 sm:py-4 transition-colors ${isSelected ? 'bg-[#FCFCFE]' : 'hover:bg-[#FAFAFC]'} flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-apple-borderLight last:border-b-0">
             
             <!-- Esquerda: Toggle / Checkbox + Nome + Preço de Referência -->
             <div class="flex items-center gap-3 cursor-pointer select-none flex-1" onclick="toggleProduct('${p.id}')">
@@ -660,7 +661,7 @@
               <div>
                 <div class="flex items-center gap-1.5 flex-wrap">
                   <span class="text-xs sm:text-sm font-semibold text-apple-text">${p.name}</span>
-                  ${p.variable > 0 ? `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-apple-bg border border-apple-border text-apple-text">+${p.variable}% variável</span>` : ''}
+                  <span id="var-badge-${p.id}" class="${currentVariable > 0 ? '' : 'hidden'} text-[10px] font-bold px-1.5 py-0.5 rounded bg-apple-bg border border-apple-border text-apple-text">+${currentVariable}% variável</span>
                   ${p.detail ? `<span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-apple-bg text-apple-secondary">${p.detail}</span>` : ''}
                   ${p.isSetup ? `<span class="text-[10px] font-medium px-1.5 py-0.5 rounded bg-blue-50 text-blue-700">Taxa Única</span>` : ''}
                 </div>
@@ -671,10 +672,26 @@
 
             </div>
 
-            <!-- Direita: Quando Selecionado, Exibe Input do Valor e Botões Rápidos -->
+            <!-- Direita: Quando Selecionado, Exibe Controles -->
             ${isSelected ? `
-              <div class="flex items-center gap-2 pl-8 sm:pl-0 shrink-0">
+              <div class="flex items-center gap-2 pl-8 sm:pl-0 shrink-0 flex-wrap sm:flex-nowrap" onclick="event.stopPropagation()">
                 
+                <!-- Controle de % Variável Personalizado -->
+                <div class="flex items-center gap-1 px-2 py-1 bg-apple-bg border border-apple-border rounded-lg" title="Percentual de Comissão Variável sobre Vendas">
+                  <span class="text-[10px] font-semibold text-apple-secondary">Var:</span>
+                  <input 
+                    type="number" 
+                    step="0.5"
+                    min="0"
+                    max="100"
+                    value="${currentVariable}" 
+                    onchange="changeVariable('${p.id}', this.value)"
+                    onkeyup="changeVariable('${p.id}', this.value)"
+                    class="w-9 bg-transparent text-xs apple-price font-bold text-apple-text text-right focus:outline-none"
+                  >
+                  <span class="text-[10px] font-bold text-apple-secondary">%</span>
+                </div>
+
                 <!-- Input de Valor Negociado -->
                 <div class="relative flex items-center">
                   <span class="absolute left-2.5 text-[11px] apple-price text-apple-secondary font-medium">R$</span>
@@ -709,14 +726,14 @@
                 <!-- Aviso Sutil se Abaixo do Mínimo -->
                 ${isBelowMin ? `
                   <span class="text-[10px] font-semibold text-red-600 bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
-                    Abaixo do mín
+                    Abaixo mín
                   </span>
                 ` : ''}
 
               </div>
             ` : `
               <!-- Quando Não Selecionado: Mostra Apenas Valor Cheio Limpo -->
-              <div class="text-right pl-8 sm:pl-0 shrink-0 text-xs font-semibold text-apple-secondary apple-price">
+              <div class="text-right pl-8 sm:pl-0 shrink-0 text-xs font-semibold text-apple-secondary apple-price hidden sm:block">
                 ${formatMoney(p.fullPrice)}
               </div>
             `}
@@ -734,11 +751,16 @@
       if (!prod) return;
 
       if (!selectedItems[id]) {
-        selectedItems[id] = { selected: true, price: prod.fullPrice };
+        selectedItems[id] = { selected: true, price: prod.fullPrice, variable: prod.variable };
       } else {
         selectedItems[id].selected = !selectedItems[id].selected;
-        if (selectedItems[id].selected && (selectedItems[id].price === undefined || selectedItems[id].price === null)) {
-          selectedItems[id].price = prod.fullPrice;
+        if (selectedItems[id].selected) {
+          if (selectedItems[id].price === undefined || selectedItems[id].price === null) {
+            selectedItems[id].price = prod.fullPrice;
+          }
+          if (selectedItems[id].variable === undefined || selectedItems[id].variable === null) {
+            selectedItems[id].variable = prod.variable;
+          }
         }
       }
 
@@ -748,8 +770,12 @@
     }
 
     function setPrice(id, price) {
-      if (!selectedItems[id]) selectedItems[id] = { selected: true, price: price };
-      else selectedItems[id].price = price;
+      if (!selectedItems[id]) {
+        const prod = products.find(p => p.id === id);
+        selectedItems[id] = { selected: true, price: price, variable: prod ? prod.variable : 0 };
+      } else {
+        selectedItems[id].price = price;
+      }
       saveSelections();
       renderProductsList();
       updateSummary();
@@ -757,20 +783,45 @@
 
     function changePrice(id, val) {
       const num = parseFloat(val);
-      if (!selectedItems[id]) selectedItems[id] = { selected: true, price: isNaN(num) ? 0 : num };
-      else selectedItems[id].price = isNaN(num) ? 0 : num;
+      if (!selectedItems[id]) {
+        const prod = products.find(p => p.id === id);
+        selectedItems[id] = { selected: true, price: isNaN(num) ? 0 : num, variable: prod ? prod.variable : 0 };
+      } else {
+        selectedItems[id].price = isNaN(num) ? 0 : num;
+      }
       saveSelections();
       updateSummary();
       
-      // Checa se mudou o estado de alerta de mínimo
       const prod = products.find(p => p.id === id);
       if (prod) {
         const isBelow = selectedItems[id].price < prod.minPrice;
-        const currentHasWarn = document.getElementById(`warn-${id}`);
-        // Renderiza apenas se necessário para evitar perda de foco
         if (isBelow !== (selectedItems[id]._wasBelow || false)) {
           selectedItems[id]._wasBelow = isBelow;
           renderProductsList();
+        }
+      }
+    }
+
+    function changeVariable(id, val) {
+      const num = parseFloat(val);
+      const varVal = isNaN(num) ? 0 : Math.max(0, Math.min(100, num));
+      if (!selectedItems[id]) {
+        const prod = products.find(p => p.id === id);
+        selectedItems[id] = { selected: true, price: prod ? prod.fullPrice : 0, variable: varVal };
+      } else {
+        selectedItems[id].variable = varVal;
+      }
+      saveSelections();
+      updateSummary();
+
+      // Atualiza badge de variável ao lado do nome em tempo real sem rerenderizar toda a lista
+      const badge = document.getElementById(`var-badge-${id}`);
+      if (badge) {
+        if (varVal > 0) {
+          badge.textContent = `+${varVal}% variável`;
+          badge.classList.remove('hidden');
+        } else {
+          badge.classList.add('hidden');
         }
       }
     }
@@ -828,7 +879,8 @@
           finalRecurrent += price;
         }
 
-        if (prod.variable > 0) hasVariable = true;
+        const itemVar = itemState.variable !== undefined ? itemState.variable : prod.variable;
+        if (itemVar > 0) hasVariable = true;
 
         return `
           <div class="flex items-center justify-between text-xs py-1">
@@ -846,9 +898,25 @@
       discTotalEl.textContent = totalDiscount > 0 ? `- ${formatMoney(totalDiscount)} (${discountPercent}%)` : 'R$ 0,00 (0%)';
       finalTotalEl.textContent = formatMoney(finalRecurrent);
 
-      // Variável
-      if (hasVariable) {
+      // Variáveis Personalizados
+      const varItems = selectedIds.map(id => {
+        const prod = products.find(p => p.id === id);
+        if (!prod) return null;
+        const itemState = selectedItems[id];
+        const v = itemState.variable !== undefined ? itemState.variable : prod.variable;
+        return v > 0 ? { name: prod.name, variable: v } : null;
+      }).filter(Boolean);
+
+      if (varItems.length > 0) {
         varRow.classList.remove('hidden');
+        const varValEl = document.getElementById('summary-variable-val');
+        if (varValEl) {
+          if (varItems.length === 1) {
+            varValEl.textContent = `${varItems[0].variable}% sobre vendas`;
+          } else {
+            varValEl.textContent = varItems.map(vi => `${vi.variable}% (${vi.name})`).join(', ');
+          }
+        }
       } else {
         varRow.classList.add('hidden');
       }
@@ -1052,11 +1120,14 @@
       let finalRecurrent = 0;
       let setupTotal = 0;
       let hasVariable = false;
+      const varItems = [];
 
       const itemsRows = selectedIds.map((id, index) => {
         const prod = products.find(p => p.id === id);
         if (!prod) return '';
-        const price = selectedItems[id].price !== undefined ? selectedItems[id].price : prod.fullPrice;
+        const itemState = selectedItems[id] || {};
+        const price = itemState.price !== undefined ? itemState.price : prod.fullPrice;
+        const itemVar = itemState.variable !== undefined ? itemState.variable : prod.variable;
 
         if (prod.isSetup) setupTotal += price;
         else {
@@ -1064,14 +1135,17 @@
           finalRecurrent += price;
         }
 
-        if (prod.variable > 0) hasVariable = true;
+        if (itemVar > 0) {
+          hasVariable = true;
+          varItems.push({ name: prod.name, variable: itemVar });
+        }
 
         return `
           <tr style="border-bottom: 1px solid #E5E5EA;">
             <td style="padding: 9px 12px; font-weight: 600; color: #1D1D1F; font-size: 11px;">${index + 1}. ${prod.name} ${prod.detail ? `<span style="font-weight: 400; color: #86868B;">(${prod.detail})</span>` : ''}</td>
             <td style="padding: 9px 12px; text-align: center; color: #86868B; font-variant-numeric: tabular-nums; font-weight: 500; font-size: 11px;">${formatMoney(prod.fullPrice)}</td>
             <td style="padding: 9px 12px; text-align: right; font-weight: 700; color: #1D1D1F; font-variant-numeric: tabular-nums; font-size: 11px;">${formatMoney(price)}${prod.isSetup ? ' (Setup)' : ''}</td>
-            <td style="padding: 9px 12px; text-align: center; color: #1D1D1F; font-weight: 600; font-size: 10px;">${prod.variable > 0 ? `${prod.variable}% s/ vendas` : '—'}</td>
+            <td style="padding: 9px 12px; text-align: center; color: #1D1D1F; font-weight: 600; font-size: 10px;">${itemVar > 0 ? `${itemVar}% s/ vendas` : '—'}</td>
           </tr>
         `;
       }).join('');
@@ -1174,7 +1248,10 @@
             <div style="flex: 1; min-width: 0; background: #F9F9FB; border: 1px solid #E5E5EA; border-radius: 10px; padding: 12px;">
               <p style="font-size: 9.5px; text-transform: uppercase; font-weight: 700; color: #86868B; margin: 0 0 6px 0;">Condições Comerciais</p>
               <p style="font-size: 10.5px; margin: 0 0 5px 0;"><strong>Forma de Pagamento:</strong> ${data['payment-method'] || 'PIX'}</p>
-              <p style="font-size: 10.5px; margin: 0;"><strong>Vigência Contratual:</strong> ${data['fidelity'] || '12 meses'}</p>
+              <p style="font-size: 10.5px; margin: 0 0 ${hasVariable && varItems.length > 0 ? '5px' : '0'} 0;"><strong>Vigência Contratual:</strong> ${data['fidelity'] || '12 meses'}</p>
+              ${hasVariable && varItems.length > 0 ? `
+                <p style="font-size: 10.5px; margin: 0; color: #14532D; font-weight: 600;"><strong>Variável:</strong> ${varItems.length === 1 ? `${varItems[0].variable}% sobre vendas` : varItems.map(vi => `${vi.variable}% (${vi.name})`).join(' • ')}</p>
+              ` : ''}
             </div>
 
           </div>
@@ -1401,11 +1478,14 @@
         let finalRecurrent = 0;
         let setupTotal = 0;
         let hasVariable = false;
+        const varItems = [];
 
         const tableRows = selectedIds.map((id, index) => {
           const prod = products.find(p => p.id === id);
           if (!prod) return null;
-          const price = selectedItems[id].price !== undefined ? selectedItems[id].price : prod.fullPrice;
+          const itemState = selectedItems[id] || {};
+          const price = itemState.price !== undefined ? itemState.price : prod.fullPrice;
+          const itemVar = itemState.variable !== undefined ? itemState.variable : prod.variable;
 
           if (prod.isSetup) setupTotal += price;
           else {
@@ -1413,9 +1493,12 @@
             finalRecurrent += price;
           }
 
-          if (prod.variable > 0) hasVariable = true;
+          if (itemVar > 0) {
+            hasVariable = true;
+            varItems.push({ name: prod.name, variable: itemVar });
+          }
 
-          const varText = prod.variable > 0 ? `${prod.variable}% sobre vendas` : '—';
+          const varText = itemVar > 0 ? `${itemVar}% sobre vendas` : '—';
           const nameWithDetail = prod.name + (prod.detail ? ` (${prod.detail})` : '');
           const closedFormatted = formatMoney(price) + (prod.isSetup ? ' (Setup)' : '');
 
@@ -1489,11 +1572,14 @@
         doc.setFont('helvetica', 'bold');
         doc.text(fidel, 52, afterTableY + 17);
 
-        if (hasVariable) {
+        if (hasVariable && varItems.length > 0) {
           doc.setTextColor(20, 83, 45);
           doc.setFont('helvetica', 'bold');
           doc.setFontSize(7.5);
-          doc.text(`• Variável Contratual: 5% sobre vendas`, 19, afterTableY + 22);
+          const varDesc = varItems.length === 1 
+            ? `${varItems[0].variable}% sobre vendas` 
+            : varItems.map(vi => `${vi.variable}% (${vi.name})`).join(' • ');
+          doc.text(`• Variável: ${varDesc}`.substring(0, 50), 19, afterTableY + 22);
         } else {
           doc.setTextColor(134, 134, 139);
           doc.setFont('helvetica', 'normal');
@@ -1577,11 +1663,14 @@
       let finalRecurrent = 0;
       let setupTotal = 0;
       let hasVar = false;
+      const varItems = [];
 
       const servicesText = selectedIds.map((id, index) => {
         const prod = products.find(p => p.id === id);
         if (!prod) return '';
-        const price = selectedItems[id].price !== undefined ? selectedItems[id].price : prod.fullPrice;
+        const itemState = selectedItems[id] || {};
+        const price = itemState.price !== undefined ? itemState.price : prod.fullPrice;
+        const itemVar = itemState.variable !== undefined ? itemState.variable : prod.variable;
 
         if (prod.isSetup) setupTotal += price;
         else {
@@ -1589,13 +1678,22 @@
           finalRecurrent += price;
         }
 
-        if (prod.variable > 0) hasVar = true;
+        if (itemVar > 0) {
+          hasVar = true;
+          varItems.push({ name: prod.name, variable: itemVar });
+        }
 
-        const varBadge = prod.variable > 0 ? ` (+${prod.variable}% var)` : '';
+        const varBadge = itemVar > 0 ? ` (+${itemVar}% variável)` : '';
         return `${index + 1}. *${prod.name}* - ${formatMoney(price)}${prod.isSetup ? ' (Setup)' : '/mês'}${varBadge}`;
       }).join('\n');
 
       const totalDiscount = Math.max(0, originalTotal - finalRecurrent);
+
+      const varLine = hasVar && varItems.length > 0 
+        ? (varItems.length === 1 
+            ? `• *Variável Contratual:* ${varItems[0].variable}% sobre vendas\n` 
+            : `• *Variável Contratual:* ${varItems.map(vi => `${vi.variable}% (${vi.name})`).join(', ')}\n`)
+        : '';
 
       const msg = 
 `🚀 *NOVO FECHAMENTO — HANDOFF FINANCEIRO*
@@ -1613,7 +1711,7 @@ ${servicesText}
 
 💰 *CONDIÇÕES FINANCEIRAS:*
 • *Total Fechado (MRR):* *${formatMoney(finalRecurrent)}/mês*
-${setupTotal > 0 ? `• *Setup Único:* ${formatMoney(setupTotal)}\n` : ''}${hasVar ? `• *Variável Contratual:* 5% sobre vendas\n` : ''}• *Pagamento:* ${data['payment-method'] || 'PIX'}
+${setupTotal > 0 ? `• *Setup Único:* ${formatMoney(setupTotal)}\n` : ''}${varLine}• *Pagamento:* ${data['payment-method'] || 'PIX'}
 • *Vigência:* ${data['fidelity'] || '12 meses'}
 
 📎 _PDF anexo para confecção do contrato._`;
