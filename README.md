@@ -1,4 +1,4 @@
-# 🍏 CLOSER DESK — Checkout Interno & Handoff (Apple Clean Minimalist)
+# 🍏 Checkout FA — Checkout Interno & Handoff (Apple Clean Minimalist)
 
 Interface ultra minimalista no padrão **Apple Cupertino Clean (Light Mode)**, desenvolvida para Closers realizarem a passagem de bastão de vendas ao setor financeiro com agilidade e zero poluição visual.
 
