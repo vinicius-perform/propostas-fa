@@ -184,10 +184,10 @@
           <!-- Grid Limpo de Inputs Estilo Apple -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             
-            <!-- Closer Responsável (Mathyas ou José) -->
+            <!-- Closer Responsável (Mathyas, José ou Tales) -->
             <div class="sm:col-span-2">
               <label class="block text-xs font-medium text-apple-secondary mb-1.5">Closer Responsável</label>
-              <div class="grid grid-cols-2 gap-2">
+              <div class="grid grid-cols-3 gap-2">
                 <label class="cursor-pointer">
                   <input type="radio" name="closer" value="Mathyas" checked class="peer sr-only">
                   <div class="text-center py-2 px-3 rounded-xl border border-apple-border bg-[#FAFAFC] peer-checked:border-apple-text peer-checked:bg-white peer-checked:text-apple-text text-xs sm:text-sm font-semibold text-apple-secondary transition-all flex items-center justify-center gap-2">
@@ -202,53 +202,14 @@
                     <span>José</span>
                   </div>
                 </label>
+                <label class="cursor-pointer">
+                  <input type="radio" name="closer" value="Tales" class="peer sr-only">
+                  <div class="text-center py-2 px-3 rounded-xl border border-apple-border bg-[#FAFAFC] peer-checked:border-apple-text peer-checked:bg-white peer-checked:text-apple-text text-xs sm:text-sm font-semibold text-apple-secondary transition-all flex items-center justify-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-[#CCFF00]"></span>
+                    <span>Tales</span>
+                  </div>
+                </label>
               </div>
-            </div>
-
-            <!-- Razão Social / Empresa -->
-            <div>
-              <label class="block text-xs font-medium text-apple-secondary mb-1">Nome da Empresa / Razão Social</label>
-              <input 
-                type="text" 
-                id="client-company" 
-                placeholder="Ex: Alfa Soluções Digitais Ltda" 
-                class="w-full px-3 py-2 bg-[#FAFAFC] border border-apple-border rounded-xl text-xs sm:text-sm text-apple-text placeholder-apple-secondary/60 focus:bg-white focus:outline-none focus:border-apple-text transition-all"
-              >
-            </div>
-
-            <!-- CNPJ ou CPF -->
-            <div>
-              <label class="block text-xs font-medium text-apple-secondary mb-1">CNPJ ou CPF da Contratante</label>
-              <input 
-                type="text" 
-                id="client-document" 
-                oninput="maskDocument(this)"
-                placeholder="00.000.000/0000-00" 
-                class="w-full px-3 py-2 bg-[#FAFAFC] border border-apple-border rounded-xl text-xs sm:text-sm apple-price font-medium text-apple-text placeholder-apple-secondary/60 focus:bg-white focus:outline-none focus:border-apple-text transition-all"
-              >
-            </div>
-
-            <!-- Responsável Legal -->
-            <div>
-              <label class="block text-xs font-medium text-apple-secondary mb-1">Responsável pela Assinatura</label>
-              <input 
-                type="text" 
-                id="legal-name" 
-                placeholder="Nome de quem assina" 
-                class="w-full px-3 py-2 bg-[#FAFAFC] border border-apple-border rounded-xl text-xs sm:text-sm text-apple-text placeholder-apple-secondary/60 focus:bg-white focus:outline-none focus:border-apple-text transition-all"
-              >
-            </div>
-
-            <!-- WhatsApp Oficial -->
-            <div>
-              <label class="block text-xs font-medium text-apple-secondary mb-1">WhatsApp para Contato</label>
-              <input 
-                type="text" 
-                id="client-phone" 
-                oninput="maskPhone(this)"
-                placeholder="(00) 00000-0000" 
-                class="w-full px-3 py-2 bg-[#FAFAFC] border border-apple-border rounded-xl text-xs sm:text-sm apple-price font-medium text-apple-text placeholder-apple-secondary/60 focus:bg-white focus:outline-none focus:border-apple-text transition-all"
-              >
             </div>
 
             <!-- Condições Comerciais (Forma de Pagamento: PIX ou Cartão) -->
@@ -273,30 +234,35 @@
             </div>
 
             <div class="sm:col-span-2">
-              <label class="block text-xs font-medium text-apple-secondary mb-1">Fidelidade do Contrato</label>
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <label class="block text-xs font-medium text-apple-secondary mb-1.5">Fidelidade do Contrato</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <!-- Opção 1: Digitar Meses de Fidelidade -->
                 <label class="cursor-pointer">
-                  <input type="radio" name="fidelity" value="12 meses" checked class="peer sr-only">
-                  <div class="text-center py-2 px-2 rounded-xl border border-apple-border bg-[#FAFAFC] peer-checked:border-apple-text peer-checked:bg-white peer-checked:text-apple-text text-xs font-medium text-apple-secondary transition-all">
-                    12 meses
+                  <input type="radio" name="fidelity-mode" id="fidelity-mode-custom" value="custom" checked class="peer sr-only">
+                  <div class="min-h-[42px] py-1.5 px-3 rounded-xl border border-apple-border bg-[#FAFAFC] peer-checked:border-apple-text peer-checked:bg-white peer-checked:text-apple-text text-xs sm:text-sm font-semibold text-apple-secondary transition-all flex items-center justify-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-[#CCFF00]"></span>
+                    <div class="flex items-center gap-1.5">
+                      <input 
+                        type="number" 
+                        id="fidelity-months" 
+                        min="1" 
+                        max="99" 
+                        value="12" 
+                        class="w-14 text-center font-bold text-apple-text bg-white border border-apple-border rounded-lg py-1 px-1 focus:outline-none focus:border-apple-text text-xs sm:text-sm shadow-sm"
+                        onfocus="selectFidelityCustom()"
+                        oninput="selectFidelityCustom()"
+                      >
+                      <span class="text-xs sm:text-sm font-semibold text-apple-text">meses</span>
+                    </div>
                   </div>
                 </label>
+
+                <!-- Opção 2: Sem Fidelidade -->
                 <label class="cursor-pointer">
-                  <input type="radio" name="fidelity" value="6 meses" class="peer sr-only">
-                  <div class="text-center py-2 px-2 rounded-xl border border-apple-border bg-[#FAFAFC] peer-checked:border-apple-text peer-checked:bg-white peer-checked:text-apple-text text-xs font-medium text-apple-secondary transition-all">
-                    6 meses
-                  </div>
-                </label>
-                <label class="cursor-pointer">
-                  <input type="radio" name="fidelity" value="3 meses" class="peer sr-only">
-                  <div class="text-center py-2 px-2 rounded-xl border border-apple-border bg-[#FAFAFC] peer-checked:border-apple-text peer-checked:bg-white peer-checked:text-apple-text text-xs font-medium text-apple-secondary transition-all">
-                    3 meses
-                  </div>
-                </label>
-                <label class="cursor-pointer">
-                  <input type="radio" name="fidelity" value="Sem fidelidade" class="peer sr-only">
-                  <div class="text-center py-2 px-2 rounded-xl border border-apple-border bg-[#FAFAFC] peer-checked:border-apple-text peer-checked:bg-white peer-checked:text-apple-text text-xs font-medium text-apple-secondary transition-all">
-                    Sem fidelidade
+                  <input type="radio" name="fidelity-mode" id="fidelity-mode-none" value="none" class="peer sr-only">
+                  <div class="min-h-[42px] py-1.5 px-3 rounded-xl border border-apple-border bg-[#FAFAFC] peer-checked:border-apple-text peer-checked:bg-white peer-checked:text-apple-text text-xs sm:text-sm font-semibold text-apple-secondary transition-all flex items-center justify-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-[#CCFF00]"></span>
+                    <span>Sem fidelidade</span>
                   </div>
                 </label>
               </div>
@@ -541,6 +507,14 @@
         isSetup: false,
       },
       {
+        id: 'estruturacao-instagram',
+        name: 'Estruturação de Instagram',
+        fullPrice: 3000,
+        minPrice: 1500,
+        variable: 0,
+        isSetup: false,
+      },
+      {
         id: 'treinamento',
         name: 'Treinamento comercial',
         fullPrice: 3000,
@@ -595,7 +569,16 @@
       // Carregar produtos
       const savedProds = localStorage.getItem('apple_closer_products');
       if (savedProds) {
-        try { products = JSON.parse(savedProds); } catch (e) { products = [...BASE_PRODUCTS]; }
+        try {
+          products = JSON.parse(savedProds);
+          BASE_PRODUCTS.forEach(bp => {
+            if (!products.some(p => p.id === bp.id)) {
+              products.push({ ...bp });
+            }
+          });
+        } catch (e) {
+          products = [...BASE_PRODUCTS];
+        }
       } else {
         products = [...BASE_PRODUCTS];
       }
@@ -975,10 +958,26 @@
     // -------------------------------------------------------------------------
     // 6. FORMULÁRIO DO CONTRATO & MÁSCARAS
     // -------------------------------------------------------------------------
-    const FORM_IDS = [
-      'client-company', 'client-document', 
-      'legal-name', 'client-phone'
-    ];
+    const FORM_IDS = [];
+
+    function selectFidelityCustom() {
+      const r = document.getElementById('fidelity-mode-custom');
+      if (r) r.checked = true;
+      updateFidelityVisuals();
+      saveFormData();
+    }
+
+    function updateFidelityVisuals() {
+      const isNone = document.getElementById('fidelity-mode-none')?.checked;
+      const inp = document.getElementById('fidelity-months');
+      if (inp) {
+        if (isNone) {
+          inp.classList.add('opacity-40');
+        } else {
+          inp.classList.remove('opacity-40');
+        }
+      }
+    }
 
     function saveFormData() {
       const data = {};
@@ -990,8 +989,14 @@
       if (selectedCloser) data['closer'] = selectedCloser.value;
       const selectedPayment = document.querySelector('input[name="payment-method"]:checked');
       if (selectedPayment) data['payment-method'] = selectedPayment.value;
-      const selectedFidelity = document.querySelector('input[name="fidelity"]:checked');
-      if (selectedFidelity) data['fidelity'] = selectedFidelity.value;
+      
+      const fidelityMode = document.querySelector('input[name="fidelity-mode"]:checked')?.value || 'custom';
+      const monthsInput = document.getElementById('fidelity-months');
+      const months = monthsInput && monthsInput.value ? monthsInput.value.trim() : '12';
+      data['fidelity-mode'] = fidelityMode;
+      data['fidelity-months'] = months;
+      data['fidelity'] = fidelityMode === 'none' ? 'Sem fidelidade' : `${months} meses`;
+      
       localStorage.setItem('apple_closer_form', JSON.stringify(data));
     }
 
@@ -1012,9 +1017,26 @@
             const r = document.querySelector(`input[name="payment-method"][value="${data['payment-method']}"]`);
             if (r) r.checked = true;
           }
-          if (data['fidelity']) {
-            const r = document.querySelector(`input[name="fidelity"][value="${data['fidelity']}"]`);
+          if (data['fidelity-mode']) {
+            const r = document.querySelector(`input[name="fidelity-mode"][value="${data['fidelity-mode']}"]`);
             if (r) r.checked = true;
+            if (data['fidelity-months']) {
+              const inp = document.getElementById('fidelity-months');
+              if (inp) inp.value = data['fidelity-months'];
+            }
+          } else if (data['fidelity']) {
+            if (data['fidelity'] === 'Sem fidelidade') {
+              const r = document.getElementById('fidelity-mode-none');
+              if (r) r.checked = true;
+            } else {
+              const r = document.getElementById('fidelity-mode-custom');
+              if (r) r.checked = true;
+              const match = data['fidelity'].match(/\d+/);
+              if (match) {
+                const inp = document.getElementById('fidelity-months');
+                if (inp) inp.value = match[0];
+              }
+            }
           }
         } catch (e) {}
       }
@@ -1032,9 +1054,18 @@
       document.querySelectorAll('input[name="payment-method"]').forEach(r => {
         r.addEventListener('change', saveFormData);
       });
-      document.querySelectorAll('input[name="fidelity"]').forEach(r => {
-        r.addEventListener('change', saveFormData);
+      document.querySelectorAll('input[name="fidelity-mode"]').forEach(r => {
+        r.addEventListener('change', () => {
+          updateFidelityVisuals();
+          saveFormData();
+        });
       });
+      const monthsInp = document.getElementById('fidelity-months');
+      if (monthsInp) {
+        monthsInp.addEventListener('input', selectFidelityCustom);
+        monthsInp.addEventListener('change', selectFidelityCustom);
+      }
+      updateFidelityVisuals();
     }
 
     function getFormData() {
@@ -1047,8 +1078,15 @@
       data['closer'] = selectedCloser ? selectedCloser.value : 'Mathyas';
       const selectedPayment = document.querySelector('input[name="payment-method"]:checked');
       data['payment-method'] = selectedPayment ? selectedPayment.value : 'PIX';
-      const selectedFidelity = document.querySelector('input[name="fidelity"]:checked');
-      data['fidelity'] = selectedFidelity ? selectedFidelity.value : '12 meses';
+      
+      const fidelityMode = document.querySelector('input[name="fidelity-mode"]:checked')?.value || 'custom';
+      if (fidelityMode === 'none') {
+        data['fidelity'] = 'Sem fidelidade';
+      } else {
+        const monthsInput = document.getElementById('fidelity-months');
+        const months = monthsInput && monthsInput.value ? monthsInput.value.trim() : '12';
+        data['fidelity'] = `${months} meses`;
+      }
       return data;
     }
 
@@ -1095,6 +1133,13 @@
           const el = document.getElementById(id);
           if (el) el.value = '';
         });
+        const rCust = document.getElementById('fidelity-mode-custom');
+        if (rCust) rCust.checked = true;
+        const inp = document.getElementById('fidelity-months');
+        if (inp) {
+          inp.value = '12';
+          inp.classList.remove('opacity-40');
+        }
         init();
         showToast('Novo fechamento iniciado.');
       }
@@ -1177,27 +1222,20 @@
             <span style="font-size: 9.5px; font-weight: 700; color: #86868B; text-transform: uppercase; background: #F5F5F7; padding: 2px 7px; border-radius: 4px;">Uso Interno</span>
           </div>
 
-          <!-- Grade de Dados do Cliente & Closer (FLEX COMPATÍVEL COM HTML2CANVAS) -->
+          <!-- Grade de Dados do Closer & Condições (FLEX COMPATÍVEL COM HTML2CANVAS) -->
           <div style="background: #F9F9FB; border: 1px solid #E5E5EA; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
-            <div style="display: flex; gap: 16px; margin-bottom: 10px;">
+            <div style="display: flex; gap: 16px;">
               <div style="flex: 1; min-width: 0;">
                 <p style="font-size: 9.5px; text-transform: uppercase; font-weight: 700; color: #86868B; margin: 0 0 3px 0;">Closer Responsável</p>
                 <p style="font-size: 12.5px; font-weight: 700; margin: 0; color: #1D1D1F;">${data['closer'] || 'Mathyas'}</p>
               </div>
               <div style="flex: 1; min-width: 0;">
-                <p style="font-size: 9.5px; text-transform: uppercase; font-weight: 700; color: #86868B; margin: 0 0 3px 0;">Empresa Contratante</p>
-                <p style="font-size: 12.5px; font-weight: 700; margin: 0; color: #1D1D1F;">${data['client-company'] || 'Não informada'}</p>
-                <p style="font-size: 10.5px; color: #86868B; font-variant-numeric: tabular-nums; margin: 2px 0 0 0;">Doc: ${data['client-document'] || 'Não informado'}</p>
-              </div>
-            </div>
-            <div style="display: flex; gap: 16px; border-top: 1px solid #E5E5EA; padding-top: 10px;">
-              <div style="flex: 1; min-width: 0;">
-                <p style="font-size: 9.5px; text-transform: uppercase; font-weight: 700; color: #86868B; margin: 0 0 3px 0;">Signatário do Contrato</p>
-                <p style="font-size: 11.5px; font-weight: 600; margin: 0; color: #1D1D1F;">${data['legal-name'] || 'Não informado'}</p>
+                <p style="font-size: 9.5px; text-transform: uppercase; font-weight: 700; color: #86868B; margin: 0 0 3px 0;">Forma de Pagamento</p>
+                <p style="font-size: 12.5px; font-weight: 700; margin: 0; color: #1D1D1F;">${data['payment-method'] || 'PIX'}</p>
               </div>
               <div style="flex: 1; min-width: 0;">
-                <p style="font-size: 9.5px; text-transform: uppercase; font-weight: 700; color: #86868B; margin: 0 0 3px 0;">WhatsApp para Contato</p>
-                <p style="font-size: 11.5px; font-weight: 600; margin: 0; color: #1D1D1F; font-variant-numeric: tabular-nums;">${data['client-phone'] || 'Não informado'}</p>
+                <p style="font-size: 9.5px; text-transform: uppercase; font-weight: 700; color: #86868B; margin: 0 0 3px 0;">Fidelidade Contratual</p>
+                <p style="font-size: 12.5px; font-weight: 700; margin: 0; color: #1D1D1F;">${data['fidelity'] || '12 meses'}</p>
               </div>
             </div>
           </div>
@@ -1357,7 +1395,7 @@
         });
 
         const data = getFormData();
-        const clientName = (data['client-company'] || 'Cliente').replace(/[^a-zA-Z0-9]/g, '_').substring(0, 25);
+        const closerName = (data['closer'] || 'Closer').replace(/[^a-zA-Z0-9]/g, '_');
         const now = new Date();
         const dateStr = now.toLocaleDateString('pt-BR');
         const timeStr = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -1402,76 +1440,45 @@
         doc.setFontSize(7.5);
         doc.text(`${dateStr} às ${timeStr}`, 190, 25.5, { align: 'right' });
 
-        // 2. BLOCO 1: DADOS DO CLIENTE & CONTRATO
+        // 2. BLOCO 1: DADOS DO FECHAMENTO (Closer & Condições)
         doc.setFillColor(249, 249, 251);
         doc.setDrawColor(229, 229, 234);
         doc.setLineWidth(0.3);
-        doc.roundedRect(15, 40, 180, 27, 2, 2, 'FD');
+        doc.roundedRect(15, 40, 180, 18, 2, 2, 'FD');
 
         doc.setDrawColor(235, 235, 240);
-        doc.line(18, 53.5, 192, 53.5);
-        doc.line(78, 42, 78, 65);
-        doc.line(138, 42, 138, 65);
+        doc.line(75, 42, 75, 56);
+        doc.line(135, 42, 135, 56);
 
         // Coluna 1
         doc.setTextColor(134, 134, 139);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(6.5);
-        doc.text('EMPRESA CONTRATANTE', 20, 45);
+        doc.text('CLOSER RESPONSÁVEL', 20, 46);
         doc.setTextColor(29, 29, 31);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(8.5);
-        doc.text((data['client-company'] || 'Não informada').substring(0, 32), 20, 49.5);
+        doc.text(data['closer'] || 'Mathyas', 20, 52);
 
         // Coluna 2
         doc.setTextColor(134, 134, 139);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(6.5);
-        doc.text('RESPONSÁVEL LEGAL (ASSINATURA)', 82, 45);
+        doc.text('FORMA DE PAGAMENTO', 80, 46);
         doc.setTextColor(29, 29, 31);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(8.5);
-        doc.text((data['legal-name'] || 'Não informado').substring(0, 32), 82, 49.5);
+        doc.text(data['payment-method'] || 'PIX', 80, 52);
 
         // Coluna 3
         doc.setTextColor(134, 134, 139);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(6.5);
-        doc.text('CLOSER RESPONSÁVEL', 142, 45);
+        doc.text('FIDELIDADE DO CONTRATO', 140, 46);
         doc.setTextColor(29, 29, 31);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(8.5);
-        doc.text(data['closer'] || 'Mathyas', 142, 49.5);
-
-        // Linha de baixo
-        doc.setTextColor(134, 134, 139);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(6.5);
-        doc.text('CNPJ / CPF', 20, 58);
-        doc.setTextColor(29, 29, 31);
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8);
-        doc.text(data['client-document'] || 'Não informado', 20, 62.5);
-
-        doc.setTextColor(134, 134, 139);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(6.5);
-        doc.text('WHATSAPP / CONTATO', 82, 58);
-        doc.setTextColor(29, 29, 31);
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8);
-        doc.text(data['client-phone'] || 'Não informado', 82, 62.5);
-
-        doc.setTextColor(134, 134, 139);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(6.5);
-        doc.text('FORMA & VIGÊNCIA', 142, 58);
-        doc.setTextColor(29, 29, 31);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(8);
-        const formPay = data['payment-method'] || 'PIX';
-        const fidel = data['fidelity'] || '12 meses';
-        doc.text(`${formPay} • ${fidel}`, 142, 62.5);
+        doc.text(data['fidelity'] || '12 meses', 140, 52);
 
         // 3. BLOCO 2: TABELA DE SERVIÇOS (AutoTable)
         let originalTotal = 0;
@@ -1514,7 +1521,7 @@
         const totalDiscount = Math.max(0, originalTotal - finalRecurrent);
 
         doc.autoTable({
-          startY: 71,
+          startY: 64,
           margin: { left: 15, right: 15 },
           head: [['#', 'Serviço Contratado', 'Valor Tabela', 'Valor Fechado', 'Variável / Obs']],
           body: tableRows,
@@ -1635,7 +1642,7 @@
         doc.text(`${formatMoney(finalRecurrent)}/mês`, 189, afterTableY + 26, { align: 'right' });
 
         // Salvar documento diretamente
-        const fileName = `FECHAMENTO_${clientName}.pdf`;
+        const fileName = `FECHAMENTO_${closerName}_${currentProtocol}.pdf`;
         doc.save(fileName);
         showToast(`PDF ${fileName} exportado com sucesso!`);
 
@@ -1699,12 +1706,6 @@
 `🚀 *NOVO FECHAMENTO — HANDOFF FINANCEIRO*
 📋 *Protocolo:* #${currentProtocol}
 👤 *Closer:* ${data['closer'] || 'Mathyas'}
-
-🏢 *DADOS DA EMPRESA:*
-• *Cliente:* ${data['client-company'] || 'Não informado'}
-• *CNPJ/CPF:* ${data['client-document'] || 'Não informado'}
-• *Assinante:* ${data['legal-name'] || 'Não informado'}
-• *WhatsApp:* ${data['client-phone'] || '-'}
 
 📦 *SERVIÇOS CONTRATADOS:*
 ${servicesText}

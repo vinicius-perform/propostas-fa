@@ -19,7 +19,7 @@ Interface ultra minimalista no padrão **Apple Cupertino Clean (Light Mode)**, d
 
 ### Coluna Esquerda:
 1. **Esteira de Serviços (Lista Estilo Apple):**
-   - Todos os 9 produtos visíveis de uma só vez em formato de lista vertical compacta.
+   - Todos os 10 produtos visíveis de uma só vez em formato de lista vertical compacta (incluindo **Estruturação de Instagram**).
    - Cada linha possui:
      - Checkbox minimalista (quando ativo, preenche com `#CCFF00` e check preto).
      - Nome do serviço em `#1D1D1F`. Pílulas discretas para comissão variável (`+5% variável`) e franquia do Dot Sales (`2 usuários`).
@@ -28,7 +28,7 @@ Interface ultra minimalista no padrão **Apple Cupertino Clean (Light Mode)**, d
      - Alerta visual sutil quando o valor estiver abaixo do piso mínimo.
 2. **Dados para o Contrato:**
    - Card branco no mesmo fluxo, sem necessidade de troca de abas.
-   - Closer Responsável, Empresa / Razão Social, CNPJ/CPF com máscara, Responsável pela Assinatura, WhatsApp, E-mail, Forma de Pagamento, Dia de Vencimento, Fidelidade (3, 6, 12 meses) e Observações.
+   - Closer Responsável (**Mathyas, José ou Tales**), Forma de Pagamento (PIX ou Cartão de Crédito) e Fidelidade (digitar meses de fidelidade ou Sem fidelidade).
 
 ### Coluna Direita (Sticky):
 - **Resumo do Fechamento (Estilo Apple Store):**
